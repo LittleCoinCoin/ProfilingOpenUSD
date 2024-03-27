@@ -36,19 +36,19 @@ def WriteUSDStage(_nbRefs, _nbBatch, _usdExtension, _nbRepeats=100):
             
             stage = Usd.Stage.CreateNew('./Python/Temp/Cubes_{}.{}'.format(fileNumber, _usdExtension))
             
-            timings[rep][0] += (perf_counter_ns()-start) #UsdCreate
+            timings[rep][0] += (perf_counter_ns()-start) #UsdCreate - Part 1
             
             UsdGeom.Xform.Define(stage, "/World")
 
-            timings[rep][1] += (perf_counter_ns()-start) #DefineWorld
+            timings[rep][1] += (perf_counter_ns()-start) #DefineWorld - Part 2
 
             AddRandomPlaceReferencesInStage(stage, "/World", "Cube", "../Assets/SimpleTransform."+_usdExtension, int(_nbRefs/_nbBatch))
             
-            timings[rep][2] += (perf_counter_ns()-start) #AddRandomPlaceReferencesInStage (nbRefs)
+            timings[rep][2] += (perf_counter_ns()-start) #AddRandomPlaceReferencesInStage (nbRefs) - Part 3
 
             stage.GetRootLayer().Save()
 
-            timings[rep][3] += (perf_counter_ns()-start) #Save
+            timings[rep][3] += (perf_counter_ns()-start) #Save - Part 4
 
             del stage
         
