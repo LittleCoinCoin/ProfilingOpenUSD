@@ -32,22 +32,21 @@ def WriteUSDStage(_nbRefs, _nbBatch, _usdExtension, _nbRepeats=100):
     #Repeat the process nbRepeats times to get a good average
     for rep in range(_nbRepeats):
         for fileNumber in range(_nbBatch):
+
             start = perf_counter_ns()
-            
-            stage = Usd.Stage.CreateNew('./Python/Temp/Cubes_{}.{}'.format(fileNumber, _usdExtension))
-            
+            stage = Usd.Stage.CreateNew('./Temp/Cubes_{}_{}.'.format(rep, fileNumber)+_usdExtension)
             timings[rep][0] += (perf_counter_ns()-start) #UsdCreate - Part 1
             
+            start = perf_counter_ns()
             UsdGeom.Xform.Define(stage, "/World")
-
             timings[rep][1] += (perf_counter_ns()-start) #DefineWorld - Part 2
 
+            start = perf_counter_ns()
             AddRandomPlaceReferencesInStage(stage, "/World", "Cube", "../Assets/SimpleTransform."+_usdExtension, int(_nbRefs/_nbBatch))
-            
             timings[rep][2] += (perf_counter_ns()-start) #AddRandomPlaceReferencesInStage (nbRefs) - Part 3
 
+            start = perf_counter_ns()
             stage.GetRootLayer().Save()
-
             timings[rep][3] += (perf_counter_ns()-start) #Save - Part 4
 
             del stage
