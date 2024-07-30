@@ -3,7 +3,7 @@ import random as rd
 from time import perf_counter_ns
 import numpy as np
 from general_IO import writer
-from os import remove
+from os import remove, listdir
 
 def FromNPArrayToCSV(_npArr2, _filePath, _fileName, _headers=""):
     lines=[_headers]
@@ -49,17 +49,16 @@ def WriteUSDStage(_nbRefs, _nbBatch, _usdExtension, _nbRepeats=100):
             stage.GetRootLayer().Save()
             timings[rep][3] += (perf_counter_ns()-start) #Save - Part 4
 
-            del stage
-        
-        #Delete the files created
-        for fileNumber in range(_nbBatch):
-            remove("./Python/Temp/Cubes_{}.".format(fileNumber)+_usdExtension)
-
-        if (rep%10==0):
-            print("Rep: {}%".format((rep/_nbRepeats)*100), sep=" ", end="\r", flush=True)
+        print("Rep: {:.2f}%".format((rep/_nbRepeats)*100), sep=" ", end="\r", flush=True)
     
+    del stage
+
+    #Delete the files created
+    for file in listdir("./Temp/"):
+        remove("./Temp/"+file)
+
     #write the timing results in a csv file
-    #FromNPArrayToCSV(timings, "./RuntimeResults", "{}_bytes__for_{}_objects_in_{}_{}_files.csv".format(totalBytesWritten, _nbRefs, _nbBatch, _usdExtension), ",".join(timingsNames))
+    FromNPArrayToCSV(timings, "./RuntimeResults", "{}_bytes__for_{}_objects_in_{}_{}_files.csv".format(totalBytesWritten, _nbRefs, _nbBatch, _usdExtension), ",".join(timingsNames))
 
     return timings
 
