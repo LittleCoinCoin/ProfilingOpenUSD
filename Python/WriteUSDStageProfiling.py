@@ -42,7 +42,7 @@ def WriteUSDStage(_nbRefs, _nbBatch, _usdExtension, _nbRepeats=100):
             timings[rep][1] += (perf_counter_ns()-start) #DefineWorld - Part 2
 
             start = perf_counter_ns()
-            AddRandomPlaceReferencesInStage(stage, "/World", "Cube", "../Assets/SimpleTransform."+_usdExtension, int(_nbRefs/_nbBatch))
+            AddRandomPlaceReferencesInStage(stage, "/World", "Cube", "../../Assets/SimpleTransform."+_usdExtension, int(_nbRefs/_nbBatch))
             timings[rep][2] += (perf_counter_ns()-start) #AddRandomPlaceReferencesInStage (nbRefs) - Part 3
 
             start = perf_counter_ns()
