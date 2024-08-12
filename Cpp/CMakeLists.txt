@@ -8,10 +8,10 @@ project (${TargetName})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${TargetName}/$<CONFIG>/bin" CACHE STRING "" )
 
 ### build CppProfiler as a shared library ###
-set(BUILD_PROFILER_TESTS OFF)
-set(RUNTIME_PROFILER_TESTS OFF)
-set(ENABLE_PROFILER ON)
-add_subdirectory("ext/CppProfiler") # its name is Profile
+add_compile_definitions(PROFILER_ENABLED=1)
+#add_compile_definitions(NB_TIMINGS=256)
+#add_compile_definitions(NB_TRACKS=8)
+add_subdirectory("ext/CppProfiler/src/Profile") # its name is Profile
 
 ### add OpenUSD ###
 # copied and adapted from the successful setup in https://github.com/LittleCoinCoin/OpenUSD-setup-vcpkg-template
