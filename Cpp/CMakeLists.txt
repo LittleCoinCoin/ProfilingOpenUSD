@@ -66,6 +66,9 @@ Profile
 add_custom_command(TARGET ${TargetName}
 	POST_BUILD
 
+	COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/bin/Assets"
+	COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${CMAKE_HOME_DIRECTORY}/../Assets" "${CMAKE_BINARY_DIR}/${TargetName}/$<CONFIG>/Assets"
+
 	#### Copy the required plugins to the lib directory. ####
 	#### Mandatory for the application to run. ####
 	COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/${TargetName}/$<CONFIG>/lib/usd/"
