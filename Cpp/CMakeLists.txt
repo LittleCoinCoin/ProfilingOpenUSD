@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.12)
-set(CMAKE_CXX_STANDARD 20)
 
 set(TargetName "WriteBenchmark")
 project (${TargetName})
@@ -61,6 +60,8 @@ TBB::tbb
 Profile
 
 )
+
+set_property(TARGET ${TargetName} PROPERTY CXX_STANDARD 20)
 
 ### Post build commands to copy the runtime plugin dependencies of OpenUSD to a directory where the application can find them ###
 add_custom_command(TARGET ${TargetName}
