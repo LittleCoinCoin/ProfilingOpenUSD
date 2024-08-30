@@ -26,11 +26,14 @@ void AddRandomPlaceReferencesInStage(pxr::UsdStageRefPtr stage, const std::strin
 	}
 }
 
+pxr::UsdStageRefPtr CreateNewStage(const std::string& filePath)
+{
+	PROFILE_FUNCTION_TIME(0);
+	return pxr::UsdStage::CreateNew(filePath);
+}
 
 struct WriteUSDStage_RepetitionTest : public Profile::RepetitionTest
 {
-	pxr::UsdStageRefPtr stage;
-
 	int nbRefs = 0;
 	int nbBatch = 1;
 	int rep = 0;
@@ -42,10 +45,7 @@ struct WriteUSDStage_RepetitionTest : public Profile::RepetitionTest
 	{
 		for (int fileNumber = 0; fileNumber < nbBatch; ++fileNumber)
 		{
-			{
-				PROFILE_BLOCK_TIME("Create New Stage", 0);
-				stage = pxr::UsdStage::CreateNew("./Temp/Cubes_" + std::to_string(rep) + "_" + std::to_string(fileNumber) + "." + usdExtension);
-			}
+			pxr::UsdStageRefPtr stage = CreateNewStage("./Temp/Cubes_" + std::to_string(rep) + "_" + std::to_string(fileNumber) + "." + usdExtension);
 
 			{
 				PROFILE_BLOCK_TIME("Define World", 0);
@@ -61,13 +61,13 @@ struct WriteUSDStage_RepetitionTest : public Profile::RepetitionTest
 		}
 	}
 
-	/*void SetParameters(int _nbRefs, int _nbBatch, int _rep, const std::string& _usdExtension)
+	void SetParameters(int _nbRefs, int _nbBatch, int _rep, const std::string& _usdExtension)
 	{
 		nbRefs = _nbRefs;
 		nbBatch = _nbBatch;
 		rep = _rep;
 		usdExtension = _usdExtension;
-	}*/
+	}
 };
 
 //void WriteUSDStage_FixedRepetitionTesting()
@@ -124,9 +124,6 @@ int main()
 	profiler->SetTrackName(0, "Main");
 
 	WriteUSDStage_RepetitionTest writeUSDStage_Rep;
-
-	
-
 	
 	int nbRepeats = 10;
 	std::vector<int> nbRefs = { 10 };//, 100, 1000};
@@ -138,7 +135,6 @@ int main()
 
 	repetitionProfiler->SetRepetitionResults(results);
 
-	profiler->Initialize();
 	for (int refs : nbRefs)
 	{
 		for (int batch : nbBatch)
@@ -147,7 +143,7 @@ int main()
 			{
 				std::cout << "refs: " << refs << ", batch: " << batch << ", ext: " << ext << std::endl;
 
-				//writeUSDStage_Rep->SetParameters(refs, batch, nbRepeats, ext);
+				writeUSDStage_Rep.SetParameters(refs, batch, nbRepeats, ext);
 				repetitionProfiler->FixedCountRepetitionTesting(nbRepeats, writeUSDStage_Rep, false, true);
 
 				repetitionProfiler->Report(nbRepeats);
@@ -155,9 +151,6 @@ int main()
 			}
 		}
 	}
-
-	profiler->End();
-	profiler->Report();
 
 	free(results);
 	free(repetitionProfiler);
