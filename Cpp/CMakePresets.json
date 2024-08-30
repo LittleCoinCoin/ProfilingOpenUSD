@@ -1,0 +1,172 @@
+﻿{
+	"version": 3,
+	"configurePresets": [
+		{
+			"name": "Base",
+			"hidden": true,
+			"generator": "Ninja Multi-Config",
+			"binaryDir": "${sourceDir}/out/build/${presetName}",
+			"installDir": "${sourceDir}/out/install/${presetName}",
+			"cacheVariables": {
+				"CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+				"CMAKE_TOOLCHAIN_FILE": "./ext/vcpkg/scripts/buildsystems/vcpkg.cmake"
+			}
+		},
+		{
+			"name": "Clang",
+			"inherits": "Base",
+			"cacheVariables": {
+				"CMAKE_C_COMPILER": "clang$env{clang_compiler_version}",
+				"CMAKE_CXX_COMPILER": "clang++$env{clang_compiler_version}"
+			}
+		},
+		{
+			"name": "GCC",
+			"inherits": "Base",
+			"cacheVariables": {
+				"CMAKE_C_COMPILER": "gcc$env{gcc_compiler_version}",
+				"CMAKE_CXX_COMPILER": "g++$env{gcc_compiler_version}"
+			}
+		},
+		{
+			"name": "MSVC",
+			"condition": {
+				"type": "equals",
+				"lhs": "${hostSystemName}",
+				"rhs": "Windows"
+			},
+			"inherits": "Base",
+			"generator": "Visual Studio 17 2022",
+			"cacheVariables": {
+				"CMAKE_C_COMPILER": "cl.exe",
+				"CMAKE_CXX_COMPILER": "cl.exe"
+			}
+		},
+		{
+			"name": "MSVC-x64",
+			"inherits": "MSVC",
+			"architecture": {
+				"value": "x64",
+				"strategy": "external"
+			}
+		},
+		{
+			"name": "MSVC-x86",
+			"inherits": "MSVC",
+			"architecture": {
+				"value": "x86",
+				"strategy": "external"
+			}
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "Base",
+			"hidden": true,
+			"verbose": true
+		},
+		{
+			"name": "Debug",
+			"hidden": true,
+			"inherits": "Base",
+			"configuration": "Debug"
+		},
+		{
+			"name": "Release",
+			"hidden": true,
+			"inherits": "Base",
+			"configuration": "Release"
+		},
+		{
+			"name": "Clang Debug",
+			"inherits": "Debug",
+			"configurePreset": "Clang"
+		},
+		{
+			"name": "Clang Release",
+			"inherits": "Release",
+			"configurePreset": "Clang"
+		},
+		{
+			"name": "GCC Debug",
+			"inherits": "Debug",
+			"configurePreset": "GCC"
+		},
+		{
+			"name": "GCC Release",
+			"inherits": "Release",
+			"configurePreset": "GCC"
+		},
+		{
+			"name": "MSVC Debug x64",
+			"inherits": "Debug",
+			"configurePreset": "MSVC-x64"
+		},
+		{
+			"name": "MSVC Debug x86",
+			"inherits": "Debug",
+			"configurePreset": "MSVC-x86"
+		},
+		{
+			"name": "MSVC Release x64",
+			"inherits": "Release",
+			"configurePreset": "MSVC-x64"
+		},
+		{
+			"name": "MSVC Release x86",
+			"inherits": "Release",
+			"configurePreset": "MSVC-x86"
+		}
+	],
+	"testPresets": [
+		{
+			"name": "Base",
+			"hidden": true,
+			"output": {
+				"verbosity": "verbose"
+			}
+		},
+		{
+			"name": "Debug",
+			"hidden": true,
+			"inherits": "Base",
+			"configuration": "Debug"
+		},
+		{
+			"name": "Release",
+			"hidden": true,
+			"inherits": "Base",
+			"configuration": "Release"
+		},
+		{
+			"name": "Clang Debug",
+			"inherits": "Debug",
+			"configurePreset": "Clang"
+		},
+		{
+			"name": "Clang Release",
+			"inherits": "Release",
+			"configurePreset": "Clang"
+		},
+		{
+			"name": "GCC Debug",
+			"inherits": "Debug",
+			"configurePreset": "GCC"
+		},
+		{
+			"name": "GCC Release",
+			"inherits": "Release",
+			"configurePreset": "GCC"
+		},
+		{
+			"name": "MSVC Debug",
+			"inherits": "Debug",
+			"configurePreset": "MSVC"
+		},
+		{
+			"name": "MSVC Release",
+			"inherits": "Release",
+			"configurePreset": "MSVC"
+		}
+	]
+}

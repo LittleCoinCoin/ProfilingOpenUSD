@@ -1,0 +1,17 @@
+{
+  "name": "openusd-benchmark",
+  "version": "0.1.0",
+  "dependencies": [
+    {
+      "name": "tbb"
+    },
+    "usd"
+  ],
+  "builtin-baseline": "fc6345e114c2e2c4f9714037340ccb08326b3e8c",
+  "overrides": [
+    {
+      "name": "tbb",
+      "version-string": "2020_U3#8"
+    }
+  ]
+}
