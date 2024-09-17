@@ -60,6 +60,9 @@ struct WriteUSDStage_RepetitionTest : public Profile::RepetitionTest
 				stage->GetRootLayer()->Save();
 			}
 		}
+
+		//Delete the temp folder
+		std::filesystem::remove_all("./Temp");
 	}
 
 	void SetParameters(int _nbRefs, int _nbBatch, int _rep, const std::string& _usdExtension)
