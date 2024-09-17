@@ -4,6 +4,7 @@
 #include "Profile/Profiler.hpp"
 
 #include <iostream>
+#include <filesystem>
 #include <string>
 
 pxr::GfVec3f RandomVec3(float scaleX = 1.0, float scaleY = 1.0, float scaleZ = 1.0)
@@ -91,6 +92,9 @@ int main()
 	repetitionProfiler->SetRepetitionResults(results);
 	repetitionProfiler->PushBackRepetitionTest(&writeUSDStage_Rep);
 
+	std::string path = "./ProfilingResults";
+	std::filesystem::create_directory(path);
+
 	for (int refs : nbRefs)
 	{
 		for (int batch : nbBatch)
@@ -98,11 +102,15 @@ int main()
 			for (const auto& ext : usdExtension)
 			{
 				std::cout << "refs: " << refs << ", batch: " << batch << ", ext: " << ext << std::endl;
+				path = "./ProfilingResults/Refs_" + std::to_string(refs) + "_Batch_" + std::to_string(batch) + "_Ext_" + ext;
+				std::filesystem::create_directories(path+"/Summary");
+				std::filesystem::create_directories(path+"/Repetitions");
 
 				writeUSDStage_Rep.SetParameters(refs, batch, nbRepeats, ext);
 				repetitionProfiler->FixedCountRepetitionTesting(nbRepeats, false, true);
 
 				repetitionProfiler->Report(nbRepeats);
+				repetitionProfiler->ExportToCSV(path.c_str(), nbRepeats);
 				std::cout << std::endl;
 			}
 		}
