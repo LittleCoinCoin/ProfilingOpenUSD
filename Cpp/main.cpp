@@ -4,6 +4,7 @@
 #include "Profile/Profiler.hpp"
 
 #include <iostream>
+#include <filesystem>
 #include <string>
 
 pxr::GfVec3f RandomVec3(float scaleX = 1.0, float scaleY = 1.0, float scaleZ = 1.0)
@@ -59,6 +60,9 @@ struct WriteUSDStage_RepetitionTest : public Profile::RepetitionTest
 				stage->GetRootLayer()->Save();
 			}
 		}
+
+		//Delete the temp folder
+		std::filesystem::remove_all("./Temp");
 	}
 
 	void SetParameters(int _nbRefs, int _nbBatch, int _rep, const std::string& _usdExtension)
@@ -80,9 +84,9 @@ int main()
 
 	WriteUSDStage_RepetitionTest writeUSDStage_Rep;
 	
-	int nbRepeats = 10;
-	std::vector<int> nbRefs = { 10 };//, 100, 1000};
-	std::vector<int> nbBatch = { 1 };// , 2, 5, 10};
+	int nbRepeats = 100;
+	std::vector<int> nbRefs = { 10, 100, 1000};
+	std::vector<int> nbBatch = { 1, 2, 5, 10};
 	std::vector<std::string> usdExtension = { "usda", "usdc" };
 
 	Profile::RepetitionProfiler* repetitionProfiler = (Profile::RepetitionProfiler*)calloc(1, sizeof(Profile::RepetitionProfiler));
@@ -91,6 +95,9 @@ int main()
 	repetitionProfiler->SetRepetitionResults(results);
 	repetitionProfiler->PushBackRepetitionTest(&writeUSDStage_Rep);
 
+	std::string path = "./ProfilingResults";
+	std::filesystem::create_directory(path);
+
 	for (int refs : nbRefs)
 	{
 		for (int batch : nbBatch)
@@ -98,11 +105,15 @@ int main()
 			for (const auto& ext : usdExtension)
 			{
 				std::cout << "refs: " << refs << ", batch: " << batch << ", ext: " << ext << std::endl;
+				path = "./ProfilingResults/Refs_" + std::to_string(refs) + "_Batch_" + std::to_string(batch) + "_Ext_" + ext;
+				std::filesystem::create_directories(path+"/Summary");
+				std::filesystem::create_directories(path+"/Repetitions");
 
 				writeUSDStage_Rep.SetParameters(refs, batch, nbRepeats, ext);
 				repetitionProfiler->FixedCountRepetitionTesting(nbRepeats, false, true);
 
 				repetitionProfiler->Report(nbRepeats);
+				repetitionProfiler->ExportToCSV(path.c_str(), nbRepeats);
 				std::cout << std::endl;
 			}
 		}
