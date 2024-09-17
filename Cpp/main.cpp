@@ -84,9 +84,9 @@ int main()
 
 	WriteUSDStage_RepetitionTest writeUSDStage_Rep;
 	
-	int nbRepeats = 10;
-	std::vector<int> nbRefs = { 10 };//, 100, 1000};
-	std::vector<int> nbBatch = { 1 };// , 2, 5, 10};
+	int nbRepeats = 100;
+	std::vector<int> nbRefs = { 10, 100, 1000};
+	std::vector<int> nbBatch = { 1, 2, 5, 10};
 	std::vector<std::string> usdExtension = { "usda", "usdc" };
 
 	Profile::RepetitionProfiler* repetitionProfiler = (Profile::RepetitionProfiler*)calloc(1, sizeof(Profile::RepetitionProfiler));
