@@ -48,14 +48,14 @@ struct WriteUSDStage_RepetitionTest : public Profile::RepetitionTest
 			pxr::UsdStageRefPtr stage = CreateNewStage("./Temp/Cubes_" + std::to_string(rep) + "_" + std::to_string(fileNumber) + "." + usdExtension);
 
 			{
-				PROFILE_BLOCK_TIME("Define World", 0);
+				PROFILE_BLOCK_TIME(Define World, 0);
 				pxr::UsdGeomXform::Define(stage, pxr::SdfPath("/World"));
 			}
 
 			AddRandomPlaceReferencesInStage(stage, "/World", "Cube", "../../Assets/SimpleTransform." + usdExtension, nbRefs / nbBatch);
 
 			{
-				PROFILE_BLOCK_TIME("Save Stage", 0);
+				PROFILE_BLOCK_TIME(Save Stage, 0);
 				stage->GetRootLayer()->Save();
 			}
 		}
