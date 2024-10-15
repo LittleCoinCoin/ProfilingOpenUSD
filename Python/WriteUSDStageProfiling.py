@@ -114,5 +114,6 @@ if (__name__=="__main__"):
         for batch in nbBatch:
             for ext in usdExtension:
                 print("refs: {}, batch: {}, ext: {}".format(refs, batch, ext))
-                WriteUSDStage(refs, batch, ext, nbRepeats, numWorkers)
+                #WriteUSDStage_Parallelized(refs, batch, ext, nbRepeats, numWorkers)
+                WriteUSDStage(refs, batch, ext, nbRepeats)
                 print()
