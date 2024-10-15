@@ -49,14 +49,13 @@ def process_file(_rep, _nbBatch, _nbRefs, _usdExtension):
 
     return timings
 
-def WriteUSDStage(_nbRefs, _nbBatch, _usdExtension, _nbRepeats=100, _numWorkers=1):
+def WriteUSDStage_Parallelized(_nbRefs, _nbBatch, _usdExtension, _nbRepeats=100, _numWorkers=1):
 
     # Determine the number of processes to use
     numWorkers = min(_nbRepeats, _numWorkers)  # Use _numWorkers if it is smaller than _nbRepeats
     
     totalBytesWritten=3*3*4*_nbRefs # translation, rotation and scale are 3 vectors of 3 floats (32 bits = 4 bytes)
     timingsNames=["UsdCreate", "Define World", "Add {} Refs to {} File(s)".format(_nbRefs, _nbBatch), "Save {} File".format(_nbBatch)]
-    #timings=np.zeros((numWorkers, _nbRepeats, len(timingsNames)), np.int64)
     timings=np.zeros((_nbRepeats, len(timingsNames)), np.int64)
 
     # Create the directory to store the temporary files if it does not exist
@@ -73,8 +72,32 @@ def WriteUSDStage(_nbRefs, _nbBatch, _usdExtension, _nbRepeats=100, _numWorkers=
         remove("./Temp/"+file)
 
     # write the detail timing results in a csv file
-    check_make_directory("./RuntimeResults_{}-Processes".format(numWorkers))
-    FromNPArrayToCSV(timings, "./RuntimeResults_{}-Processes".format(numWorkers), "{}_bytes_for_{}_objects_in_{}_{}_files.csv".format(totalBytesWritten, _nbRefs, _nbBatch, _usdExtension), ",".join(timingsNames))
+    outputDir = "./RuntimeResults_{}-Processes".format(numWorkers)
+    check_make_directory(outputDir)
+    FromNPArrayToCSV(timings, outputDir, "{}_bytes_for_{}_objects_in_{}_{}_files.csv".format(totalBytesWritten, _nbRefs, _nbBatch, _usdExtension), ",".join(timingsNames))
+    return timings
+
+def WriteUSDStage(_nbRefs, _nbBatch, _usdExtension, _nbRepeats=100):
+
+    totalBytesWritten=3*3*4*_nbRefs # translation, rotation and scale are 3 vectors of 3 floats (32 bits = 4 bytes)
+    timingsNames=["UsdCreate", "Define World", "Add {} Refs to {} File(s)".format(_nbRefs, _nbBatch), "Save {} File".format(_nbBatch)]
+    timings=np.zeros((_nbRepeats, len(timingsNames)), np.int64)
+
+    # Create the directory to store the temporary files if it does not exist
+    check_make_directory("./Temp/")
+    # Create and start the processes using ProcessPoolExecutor
+    for rep in range(_nbRepeats):
+        print("Rep: {}".format(rep), end="\r")
+        timings[rep] = process_file(rep, _nbBatch, _nbRefs, _usdExtension)[:]
+
+    # Delete the files created
+    for file in listdir("./Temp/"):
+        remove("./Temp/"+file)
+
+    # write the detail timing results in a csv file
+    outputDir = "./RuntimeResults_Single"
+    check_make_directory(outputDir)
+    FromNPArrayToCSV(timings, outputDir, "{}_bytes_for_{}_objects_in_{}_{}_files.csv".format(totalBytesWritten, _nbRefs, _nbBatch, _usdExtension), ",".join(timingsNames))
     return timings
 
 if (__name__=="__main__"):
